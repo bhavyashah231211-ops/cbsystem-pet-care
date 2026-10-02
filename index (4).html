@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CBSystem Pet Care</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1e1e2e;--card2:#252538;--bd:#2a2a40;--ac:#2dd4a0;--or:#ff8a3d;--red:#ff4560;--blue:#4a9eff;--tx:#f0f0f8;--tx2:#9090b0}
+:root[data-theme=light]{--bg:#f4f5fa;--bg2:#fff;--card:#fff;--card2:#eef0f7;--bd:#d9dcea;--tx:#161625;--tx2:#5a5d78}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#f4f5fa;--bg2:#fff;--card:#fff;--card2:#eef0f7;--bd:#d9dcea;--tx:#161625;--tx2:#5a5d78}}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:14px 'DM Sans',system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+h1,h2,.bb{font-family:'Bebas Neue',Impact,sans-serif;letter-spacing:2px;font-weight:400}
+button,input,select,textarea{font:inherit;color:inherit}
+.scr{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;overflow:auto;z-index:5}
+.logo{font-size:3.6rem;line-height:1}.logo b{color:var(--ac);font-weight:400}
+.sub{color:var(--tx2);font-size:.8rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;width:100%;max-width:640px}
+.st{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px 12px;text-align:center;cursor:pointer;transition:.15s}
+.st:hover{border-color:var(--ac);transform:translateY(-2px)}.st i{font-style:normal;font-size:2rem;display:block}
+.st .bb{font-size:1.3rem;margin-top:4px}.st small{color:var(--tx2);font-size:.65rem}
+.btn{background:var(--card2);border:1px solid var(--bd);border-radius:9px;padding:8px 13px;cursor:pointer}
+.btn:hover{border-color:var(--ac)}.pri{background:var(--ac);color:#06281d;border-color:var(--ac);font-weight:700}
+.dng{color:var(--red)}.sm{padding:4px 9px;font-size:.78rem}
+.pad{display:grid;grid-template-columns:repeat(3,64px);gap:8px}.pad button{height:56px;border-radius:12px;background:var(--card);border:1px solid var(--bd);font-size:1.2rem;cursor:pointer}
+.dots{display:flex;gap:10px;height:16px}.dots span{width:13px;height:13px;border-radius:50%;border:2px solid var(--ac)}.dots .on{background:var(--ac)}
+#app{position:fixed;inset:0;display:none;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.top{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--bg2);border-bottom:1px solid var(--bd)}
+.top .bb{font-size:1.5rem}.top .bb b{color:var(--ac);font-weight:400}.sp{flex:1}
+nav{display:flex;gap:4px;padding:6px 10px;background:var(--bg2);overflow-x:auto;border-bottom:1px solid var(--bd)}
+nav button{white-space:nowrap;background:none;border:0;padding:7px 12px;border-radius:8px;cursor:pointer;color:var(--tx2)}
+nav button.on{background:var(--card2);color:var(--ac);font-weight:700}
+main{flex:1;overflow:auto;padding:14px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:13px}
+.card h3{font-size:.72rem;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.big{font-family:'Bebas Neue',Impact,sans-serif;font-size:2rem;color:var(--ac)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;min-width:520px}th,td{padding:9px 11px;text-align:left;border-bottom:1px solid var(--bd);font-size:.85rem}
+th{color:var(--tx2);font-size:.7rem;text-transform:uppercase;letter-spacing:1px}tr:last-child td{border:0}
+.tag{padding:2px 8px;border-radius:99px;font-size:.7rem;background:var(--card2)}.g{color:var(--ac)}.o{color:var(--or)}.r{color:var(--red)}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+label{display:block;font-size:.72rem;color:var(--tx2);margin:8px 0 3px}
+.mod{position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;padding:14px;z-index:20}
+.mb{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;width:100%;max-width:440px;max-height:90vh;overflow:auto}
+.mb h2{font-size:1.5rem;margin-bottom:4px}
+#toasts{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:6px;z-index:50;pointer-events:none}
+.toast{background:var(--ac);color:#06281d;padding:9px 16px;border-radius:10px;font-weight:700}
+.bar{display:flex;align-items:flex-end;gap:8px;height:120px}.bar div{flex:1;background:var(--ac);border-radius:5px 5px 0 0;position:relative;min-height:2px}
+.bar span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:.62rem;color:var(--tx2)}
+.slots{display:flex;flex-wrap:wrap;gap:6px}.slots .btn.on{background:var(--ac);color:#06281d}.slots .btn[disabled]{opacity:.3}
+@media(max-width:600px){.logo{font-size:2.8rem}}
+</style></head><body>
+<div id="toasts"></div>
+<div class="scr" id="ss"></div>
+<div id="app"><div class="top"><div class="bb" id="tl"></div><div class="sp"></div><span class="sub" id="who"></span><button class="btn sm" onclick="theme()">◐</button><button class="btn sm" onclick="logout()">Logout</button></div><nav id="nav"></nav><main id="main"></main></div>
+<script>
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9);
+const iso=n=>{const d=new Date();d.setDate(d.getDate()+(n||0));return d.toISOString().slice(0,10)};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='cbspet1';
+const DB={d:null,
+ load(){try{const s=localStorage.getItem(KEY);if(s)this.d=JSON.parse(s)}catch(e){}if(!this.d)this.d=seed();this.d=mig(this.d)},
+ save(){try{localStorage.setItem(KEY,JSON.stringify(this.d))}catch(e){}}};
+function seed(){const c1=uid(),c2=uid(),s1=uid(),s2=uid(),s3=uid(),a1=uid();return{
+ set:{name:'CBSystem',tag:'Care for every paw.',ac:'#2dd4a0',cur:'£'},
+ staff:[{id:'u1',name:'Owner',role:'owner',pin:'1234'},{id:'u2',name:'Sam (Desk)',role:'desk',pin:'1111'},{id:'u3',name:'Priya (Groomer)',role:'care',pin:'2222'},{id:'u4',name:'Tom (Walker)',role:'care',pin:'3333'}],
+ att:[],
+ svc:[{id:s1,name:'Dog Grooming',price:35,mins:60,promo:0},{id:s2,name:'Dog Walking',price:15,mins:30,promo:10},{id:s3,name:'Boarding (per night)',price:28,mins:60,promo:0}],
+ cust:[{id:c1,name:'Alice Brown',phone:'07700 900111',email:'alice@example.com',pet:'Biscuit',species:'Dog',breed:'Labrador',vacc:iso(12),notes:'Nervous around clippers'},{id:c2,name:'Mark Davies',phone:'07700 900222',email:'mark@example.com',pet:'Luna',species:'Cat',breed:'Siamese',vacc:iso(90),notes:'Prefers morning slots'}],
+ appt:[{id:a1,cid:c1,sid:s1,uid:'u3',date:iso(0),time:'10:00',st:'booked'},{id:uid(),cid:c2,sid:s3,uid:'u4',date:iso(1),time:'09:00',st:'booked'}],
+ inv:[],task:[{id:uid(),t:'Clean grooming station',uid:'u3',st:'todo'},{id:uid(),t:'Prepare kennel 3',uid:'u4',st:'doing'}],
+ msg:[],rev:[{id:uid(),cid:c1,r:5,t:'Biscuit looked fantastic!',d:iso(-3)}],
+ stock:[{id:uid(),n:'Dog shampoo (5L)',q:2,min:3,sup:'PetSupplyCo'},{id:uid(),n:'Treats (bulk)',q:12,min:5,sup:'PetSupplyCo'}],
+ faq:['Thanks for your enquiry! We are open Mon–Sat, 9am–5pm.','Please bring your pet\'s vaccination record on the first visit.','To reschedule, reply with your preferred date and time.']}}
+let D,ses=null,tab='';const S=()=>D.set;
+const m=n=>S().cur+Number(n||0).toFixed(2);
+const cn=id=>(D.cust.find(c=>c.id===id)||{name:'—'}).name,sn=id=>(D.svc.find(s=>s.id===id)||{name:'—'}).name,un=id=>(D.staff.find(s=>s.id===id)||{name:'—'}).name;
+const price=s=>s.price*(1-(s.promo||0)/100);
+function save(){DB.save();cloudPush();}
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;$('#toasts').appendChild(e);setTimeout(()=>e.remove(),2600)}
+function theme(){const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'}
+function brand(){document.documentElement.style.setProperty('--ac',S().ac);document.title=S().name+' Pet Care';
+ const n=esc(S().name);$('#tl').innerHTML=n+' <b>PET</b>'}
+/* ---- stations & login ---- */
+const ST=[['desk','🐾','Front Desk','Customers · Bookings · Billing'],['care','✂️','Care Team','Tasks · Schedule · Stock'],['owner','👑','Owner','Reports · Settings · All'],['book','📲','Online Booking','Customer self-booking'],['portal','🐶','My Pets','Customer login']];
+function stations(){ses=null;$('#app').style.display='none';const s=$('#ss');s.style.display='flex';
+ s.innerHTML=`<div class="logo bb">${esc(S().name)}<b> PET</b></div><div class="sub">${esc(S().tag)}</div><div class="grid">${ST.map(x=>`<div class="st" onclick="pick('${x[0]}')"><i>${x[1]}</i><div class="bb">${x[2]}</div><small>${x[3]}</small></div>`).join('')}</div><div class="sub">Local Mode · v1.0</div>`}
+function pick(r){if(r==='book')return booking();if(r==='portal')return portalLogin();const l=D.staff.filter(u=>u.role===r||(r==='desk'&&u.role==='owner')&&false||u.role===r);
+ $('#ss').innerHTML=`<h2>Who's working?</h2><div class="row">${l.map(u=>`<button class="btn" onclick="pin('${u.id}')">${esc(u.name)}</button>`).join('')||'<span class="sub">No staff for this station</span>'}</div><button class="btn sm" onclick="stations()">← Back</button>`}
+let pv='';
+function pin(id){pv='';const draw=()=>{$('#ss').innerHTML=`<h2>${esc(un(id))}</h2><div class="dots">${[0,1,2,3].map(i=>`<span class="${i<pv.length?'on':''}"></span>`).join('')}</div><div class="pad">${[1,2,3,4,5,6,7,8,9,'⌫',0,'✓'].map(k=>`<button data-k="${k}">${k}</button>`).join('')}</div><button class="btn sm" onclick="stations()">← Back</button>`;
+ document.querySelectorAll('.pad button').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(k==='⌫')pv=pv.slice(0,-1);else if(k!=='✓')pv+=k;if(pv.length>=4||k==='✓'){const u=D.staff.find(x=>x.id===id);if(u&&u.pin===pv){login(u);return}toast('Wrong PIN');pv=''}draw()})};draw()}
+const TABS={owner:['dash','cust','appt','svc','bill','task','msg','rev','stock','ana','help','set'],desk:['dash','cust','appt','svc','bill','msg','rev','help'],care:['appt','task','stock','help']};
+const LBL={dash:'📊 Dashboard',cust:'👥 Customers',appt:'📅 Appointments',svc:'🏷️ Services',bill:'🧾 Billing',task:'✅ Tasks & Staff',msg:'💬 Messages',rev:'⭐ Reviews',stock:'📦 Inventory',ana:'📈 Analytics',help:'📚 Resources',set:'⚙️ Settings'};
+function login(u){ses=u;$('#ss').style.display='none';$('#app').style.display='flex';$('#who').textContent=u.name;brand();const t=TABS[u.role];
+ $('#nav').innerHTML=t.map(k=>`<button id="n-${k}" onclick="go('${k}')">${LBL[k]}</button>`).join('');go(t[0])}
+function logout(){ses=null;stations()}
+function go(k){tab=k;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.id==='n-'+k));render()}
+function render(){if(!ses)return;$('#main').innerHTML=V[tab]();}
+/* ---- modal + form helpers ---- */
+function modal(h){const e=document.createElement('div');e.className='mod';e.innerHTML=`<div class="mb">${h}</div>`;e.onclick=ev=>{if(ev.target===e)e.remove()};document.body.appendChild(e);return e}
+function close(){document.querySelectorAll('.mod').forEach(e=>e.remove())}
+function form(title,fields,val,cb){const e=modal(`<h2>${title}</h2>${fields.map(f=>{const v=val[f[0]]==null?'':val[f[0]];let i;
+ if(f[2]==='select')i=`<select name="${f[0]}">${f[3].map(o=>`<option value="${esc(o[0])}" ${o[0]==v?'selected':''}>${esc(o[1])}</option>`).join('')}</select>`;
+ else if(f[2]==='textarea')i=`<textarea name="${f[0]}" rows="3">${esc(v)}</textarea>`;
+ else i=`<input name="${f[0]}" type="${f[2]||'text'}" value="${esc(v)}">`;return`<label>${f[1]}</label>${i}`}).join('')}<div class="row" style="margin-top:14px"><button class="btn pri" id="fs">Save</button><button class="btn" onclick="close()">Cancel</button></div>`);
+ e.querySelector('#fs').onclick=()=>{const o={};e.querySelectorAll('[name]').forEach(x=>o[x.name]=x.type==='number'?Number(x.value):x.value);e.remove();cb(o)}}
+function upsert(key,id,o){if(id){Object.assign(D[key].find(x=>x.id===id),o)}else D[key].push(Object.assign({id:uid()},o));save();render()}
+function del(key,id){if(!confirm('Delete this record?'))return;D[key]=D[key].filter(x=>x.id!==id);save();close();render()}
+const T=(h,r)=>`<div class="tw"><table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r.join('')||`<tr><td colspan="${h.length}" class="sub">Nothing here yet</td></tr>`}</table></div>`;
+/* ---- business logic ---- */
+function slotsFor(date,mins){const cap=D.staff.filter(u=>u.role==='care').length||1;const out=[];for(let h=9;h<17;h++){const t=String(h).padStart(2,'0')+':00';const n=D.appt.filter(a=>a.date===date&&a.time===t&&a.st!=='cancelled').length;out.push([t,n<cap])}return out}
+function remind(cid,text){const c=D.cust.find(x=>x.id===cid)||{},h=S().hooks||{};D.msg.push({id:uid(),cid,dir:'out',text,d:iso(0),ch:'SMS/Email'});save();
+ if(!h.sms&&!h.email)return toast('Logged (no SMS/email hook set in Settings)');
+ hook('sms',{to:c.phone,text});hook('email',{to:c.email,subject:S().name,text});toast('Sent via your SMS/email hooks')}
+function complete(id){const a=D.appt.find(x=>x.id===id),s=D.svc.find(x=>x.id===a.sid);a.st='done';D.inv.push({id:uid(),cid:a.cid,aid:id,amt:price(s),st:'unpaid',d:iso(0),desc:s.name});save();toast('Completed — invoice created');render()}
+function resched(id){const a=D.appt.find(x=>x.id===id);form('Reschedule',[['date','Date','date'],['time','Time','select',slotsFor(a.date,0).map(s=>[s[0],s[0]])]],a,o=>{if(D.appt.some(x=>x.id!==id&&x.date===o.date&&x.time===o.time&&x.uid===a.uid&&x.st!=='cancelled'))return toast('Staff already booked then');upsert('appt',id,o);toast('Rescheduled');})}
+function cancelA(id){if(confirm('Cancel this appointment?')){D.appt.find(x=>x.id===id).st='cancelled';save();render()}}
+function pay(id){form('Take payment',[['method','Method','select',[['Card','Credit/debit card'],['PayPal','PayPal'],['Cash','Cash']]]],{},async o=>{const i=D.inv.find(x=>x.id===id);
+ if(o.method!=='Cash'&&(S().hooks||{}).pay){toast('Contacting payment provider…');const c=D.cust.find(x=>x.id===i.cid)||{};
+  const r=await hook('pay',{invoiceId:id,amount:i.amt,currency:S().cur,method:o.method,customer:c.name,email:c.email,description:i.desc});
+  if(!r)return toast('Payment hook failed — not marked paid');
+  if(r.ok===false||r.paid===false)return toast('Payment not completed');
+  if(r.url){window.open(r.url,'_blank');if(!confirm('Checkout opened. Mark as paid once the customer has paid?'))return}}
+ i.st='paid';i.method=o.method;save();toast('Payment recorded');render()})}
+function reqFb(cid){D.msg.push({id:uid(),cid,dir:'out',text:'How was your visit? Please leave us a quick review!',d:iso(0),ch:'SMS/Email'});save();toast('Feedback request queued')}
+/* ---- views ---- */
+const V={
+dash(){const td=D.appt.filter(a=>a.date===iso(0)&&a.st==='booked'),paid=D.inv.filter(i=>i.st==='paid').reduce((s,i)=>s+i.amt,0),out=D.inv.filter(i=>i.st==='unpaid').reduce((s,i)=>s+i.amt,0),avg=D.rev.length?(D.rev.reduce((s,r)=>s+r.r,0)/D.rev.length).toFixed(1):'—';
+ const vac=D.cust.filter(c=>c.vacc&&c.vacc<=iso(30)),low=D.stock.filter(s=>s.q<=s.min);
+ return`<div class="cards"><div class="card"><h3>Today</h3><div class="big">${td.length}</div></div><div class="card"><h3>Revenue</h3><div class="big">${m(paid)}</div></div><div class="card"><h3>Outstanding</h3><div class="big o">${m(out)}</div></div><div class="card"><h3>Avg rating</h3><div class="big">${avg}</div></div></div>
+ <h2>Today's appointments</h2>${T(['Time','Customer','Service','Staff'],td.map(a=>`<tr><td>${a.time}</td><td>${esc(cn(a.cid))}</td><td>${esc(sn(a.sid))}</td><td>${esc(un(a.uid))}</td></tr>`))}
+ <h2>Vaccinations due (30 days)</h2>${T(['Pet','Owner','Due',''],vac.map(c=>`<tr><td>${esc(c.pet)}</td><td>${esc(c.name)}</td><td class="${c.vacc<iso(0)?'r':'o'}">${c.vacc}</td><td><button class="btn sm" onclick="remind('${c.id}','Reminder: ${esc(c.pet)}\\'s vaccination is due on ${c.vacc}.')">Remind</button></td></tr>`))}
+ <h2>Low stock</h2>${T(['Item','Qty','Min'],low.map(s=>`<tr><td>${esc(s.n)}</td><td class="r">${s.q}</td><td>${s.min}</td></tr>`))}`},
+cust(){const q=(window._q||'').toLowerCase();const l=D.cust.filter(c=>(c.name+c.pet+c.email).toLowerCase().includes(q));
+ return`<div class="row"><input style="max-width:260px" placeholder="Search owner or pet…" value="${esc(window._q||'')}" oninput="window._q=this.value;render();this.focus()"><button class="btn pri" onclick="editC()">+ Customer</button></div>`+T(['Owner','Contact','Pet','Vaccination due',''],l.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}<br><span class="sub">${esc(c.email)}</span></td><td>${esc(c.pet)} <span class="tag">${esc(c.species)}</span></td><td>${c.vacc||'—'}</td><td><button class="btn sm" onclick="profile('${c.id}')">Open</button></td></tr>`))},
+appt(){const l=[...D.appt].filter(a=>ses.role!=='care'||a.uid===ses.id).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ return`<div class="row"><button class="btn pri" onclick="editA()">+ Appointment</button></div>`+T(['Date','Time','Customer / pet','Service','Staff','Status',''],l.map(a=>{const c=D.cust.find(x=>x.id===a.cid)||{};return`<tr><td>${a.date}</td><td>${a.time}</td><td>${esc(c.name)} · ${esc(c.pet)}</td><td>${esc(sn(a.sid))}</td><td>${esc(un(a.uid))}</td><td><span class="tag ${a.st==='done'?'g':a.st==='cancelled'?'r':''}">${a.st}</span></td><td>${a.st==='booked'?`<button class="btn sm" onclick="complete('${a.id}')">Done</button> <button class="btn sm" onclick="resched('${a.id}')">Move</button> <button class="btn sm dng" onclick="cancelA('${a.id}')">Cancel</button>`:a.st==='done'?`<button class="btn sm" onclick="reqFb('${a.cid}')">Ask review</button>`:''}</td></tr>`}))},
+svc(){return`<div class="row"><button class="btn pri" onclick="editS()">+ Service</button></div><div class="cards">${D.svc.map(s=>`<div class="card"><h3>${s.mins} min</h3><div class="bb" style="font-size:1.4rem">${esc(s.name)}</div><div class="big">${m(price(s))}</div>${s.promo?`<div class="o">${s.promo}% promo (was ${m(s.price)})</div>`:''}<div class="row" style="margin:8px 0 0"><button class="btn sm" onclick="editS('${s.id}')">Edit</button></div></div>`).join('')}</div>`},
+bill(){const by={};D.inv.filter(i=>i.st==='unpaid').forEach(i=>by[i.cid]=(by[i.cid]||0)+i.amt);
+ return`<h2>Invoices</h2>`+T(['Date','Customer','Description','Amount','Status',''],[...D.inv].reverse().map(i=>`<tr><td>${i.d}</td><td>${esc(cn(i.cid))}</td><td>${esc(i.desc)}</td><td>${m(i.amt)}</td><td><span class="tag ${i.st==='paid'?'g':'o'}">${i.st}${i.method?' · '+i.method:''}</span></td><td>${i.st==='unpaid'?`<button class="btn sm" onclick="pay('${i.id}')">Take payment</button>`:`<button class="btn sm" onclick="printInv('${i.id}')">Print</button>`}</td></tr>`))+`<h2>Outstanding balances</h2>`+T(['Customer','Owed'],Object.keys(by).map(k=>`<tr><td>${esc(cn(k))}</td><td class="o">${m(by[k])}</td></tr>`))},
+task(){const nx={todo:'doing',doing:'done',done:'todo'};
+ return`<div class="row"><button class="btn pri" onclick="editT()">+ Task</button></div>`+T(['Task','Assigned','Status',''],D.task.filter(t=>ses.role!=='care'||t.uid===ses.id).map(t=>`<tr><td>${esc(t.t)}</td><td>${esc(un(t.uid))}</td><td><span class="tag ${t.st==='done'?'g':''}">${t.st}</span></td><td><button class="btn sm" onclick="D.task.find(x=>x.id=='${t.id}').st='${nx[t.st]}';save();render()">→ ${nx[t.st]}</button> <button class="btn sm dng" onclick="del('task','${t.id}')">✕</button></td></tr>`))+`<h2>Attendance</h2>`+T(['Staff','Role','Status',''],D.staff.map(u=>{const o=D.att.find(a=>a.uid===u.id&&!a.out);return`<tr><td>${esc(u.name)}</td><td>${u.role}</td><td>${o?'<span class="g">In since '+new Date(o.in).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+'</span>':'Out'}</td><td><button class="btn sm" onclick="clock('${u.id}')">${o?'Clock out':'Clock in'}</button></td></tr>`}))},
+msg(){return`<div class="row"><button class="btn pri" onclick="editM()">+ Message</button></div>`+T(['Date','Customer','Message','Channel'],[...D.msg].reverse().map(x=>`<tr><td>${x.d}</td><td>${esc(cn(x.cid))}</td><td>${esc(x.text)}</td><td><span class="tag">${x.dir==='in'?'inbound':x.ch}</span></td></tr>`))},
+rev(){return`<div class="row"><button class="btn pri" onclick="editR()">+ Review</button></div>`+T(['Date','Customer','Rating','Comment'],[...D.rev].reverse().map(r=>`<tr><td>${r.d}</td><td>${esc(cn(r.cid))}</td><td class="o">${'★'.repeat(r.r)}${'☆'.repeat(5-r.r)}</td><td>${esc(r.t)}</td></tr>`))},
+stock(){return`<div class="row"><button class="btn pri" onclick="editI()">+ Item</button></div>`+T(['Item','Qty','Min','Supplier',''],D.stock.map(s=>`<tr><td>${esc(s.n)}</td><td class="${s.q<=s.min?'r':''}">${s.q}</td><td>${s.min}</td><td>${esc(s.sup)}</td><td><button class="btn sm" onclick="qty('${s.id}',-1)">−</button> <button class="btn sm" onclick="qty('${s.id}',1)">+</button> ${s.q<=s.min?`<button class="btn sm o" onclick="toast('Reorder sent to ${esc(s.sup)} (demo)')">Reorder</button>`:''}</td></tr>`))},
+ana(){const days=[...Array(7)].map((_,i)=>iso(i-6)),rev=days.map(d=>D.inv.filter(i=>i.st==='paid'&&i.d===d).reduce((s,i)=>s+i.amt,0)),mx=Math.max(...rev,1);
+ const use={};D.appt.filter(a=>a.st!=='cancelled').forEach(a=>use[a.sid]=(use[a.sid]||0)+1);const hr={};D.appt.forEach(a=>hr[a.time]=(hr[a.time]||0)+1);
+ return`<h2>Revenue — last 7 days</h2><div class="card" style="padding-bottom:30px"><div class="bar">${rev.map((v,i)=>`<div style="height:${v/mx*100}%" title="${m(v)}"><span>${days[i].slice(5)}</span></div>`).join('')}</div></div>
+ <h2>Service usage</h2>${T(['Service','Bookings'],Object.keys(use).map(k=>`<tr><td>${esc(sn(k))}</td><td>${use[k]}</td></tr>`))}<h2>Peak times</h2>${T(['Time','Bookings'],Object.keys(hr).sort().map(k=>`<tr><td>${k}</td><td>${hr[k]}</td></tr>`))}<h2>Customers</h2><div class="cards"><div class="card"><h3>Total</h3><div class="big">${D.cust.length}</div></div><div class="card"><h3>Dogs / Cats / Other</h3><div class="big">${['Dog','Cat'].map(s=>D.cust.filter(c=>c.species===s).length).join(' / ')} / ${D.cust.filter(c=>!['Dog','Cat'].includes(c.species)).length}</div></div></div>`},
+help(){return`<h2>Pet owner tips</h2><div class="cards">${[['🩺 Vaccinations','Keep records up to date; most boarding needs proof of core vaccines.'],['✂️ Grooming','Brush coats weekly; long-haired breeds need a professional trim every 6–8 weeks.'],['🚶 Exercise','Most adult dogs need 30–120 minutes daily depending on breed.'],['🎓 Staff training','Cover handling, first aid and cleaning protocols with every new starter.']].map(x=>`<div class="card"><h3>${x[0]}</h3>${x[1]}</div>`).join('')}</div><h2>FAQ templates</h2>${T(['Reply'],D.faq.map(f=>`<tr><td>${esc(f)}</td></tr>`))}`},
+set(){const s=S();return`<div class="card" style="max-width:440px"><h2>Branding</h2><label>Business name</label><input id="sn" value="${esc(s.name)}"><label>Tagline</label><input id="st" value="${esc(s.tag)}"><label>Accent colour</label><input id="sa" type="color" value="${s.ac}"><label>Currency</label><input id="sc" value="${esc(s.cur)}"><div class="row" style="margin-top:12px"><button class="btn pri" onclick="saveSet()">Save</button></div></div><div class="card" style="max-width:440px;margin-top:14px"><h2>Cloud sync &amp; hooks</h2><label>Cloud function URL</label><input id="cu" value="${esc((s.cloud||{}).url)}" placeholder="https://xxxx.supabase.co/functions/v1/cbs-pet"><label>Staff key (STAFF_KEY secret)</label><input id="ck" value="${esc((s.cloud||{}).key)}"><label>SMS webhook URL (Twilio function)</label><input id="hs" value="${esc((s.hooks||{}).sms)}"><label>Email webhook URL</label><input id="he" value="${esc((s.hooks||{}).email)}"><label>Payment webhook URL (Stripe/PayPal function)</label><input id="hp" value="${esc((s.hooks||{}).pay)}"><div class="row" style="margin-top:12px"><button class="btn pri" onclick="saveInt()">Save &amp; connect</button></div><div class="sub">Sync: ${sb?'<span class="g">connected</span>':'off'}</div></div><h2 style="margin-top:14px">Staff & PINs</h2>${T(['Name','Role','PIN',''],D.staff.map(u=>`<tr><td>${esc(u.name)}</td><td>${u.role}</td><td>${u.pin}</td><td><button class="btn sm" onclick="editU('${u.id}')">Edit</button></td></tr>`))}<div class="row"><button class="btn" onclick="editU()">+ Staff</button><button class="btn" onclick="backup()">Export backup</button><button class="btn dng" onclick="if(confirm('Reset ALL data?')){D=DB.d=mig(seed());save();brand();render()}">Reset data</button></div>`}};
+/* ---- editors ---- */
+const opt=(k,f)=>D[k].map(x=>[x.id,f(x)]);
+function editC(id){form(id?'Edit customer':'New customer',[['name','Owner name'],['phone','Phone','tel'],['email','Email','email'],['pet','Pet name'],['species','Species','select',['Dog','Cat','Rabbit','Bird','Other'].map(x=>[x,x])],['breed','Breed'],['vacc','Next vaccination due','date'],['notes','Preferences / notes','textarea']],id?D.cust.find(c=>c.id===id):{species:'Dog'},o=>{if(!o.name)return toast('Name required');if(!id)o.code=newCode();upsert('cust',id,o)})}
+function profile(id){const c=D.cust.find(x=>x.id===id),h=D.appt.filter(a=>a.cid===id);modal(`<h2>${esc(c.name)}</h2><div class="sub">${esc(c.phone)} · ${esc(c.email)} · Portal code <b>${esc(c.code)}</b></div><p style="margin:8px 0"><b>${esc(c.pet)}</b> — ${esc(c.species)}, ${esc(c.breed)}<br>Vaccination due: ${c.vacc||'—'}<br><i>${esc(c.notes)}</i></p><h3 class="sub">Service history</h3>${h.map(a=>`<div>${a.date} · ${esc(sn(a.sid))} · <span class="tag">${a.st}</span></div>`).join('')||'<div class="sub">None yet</div>'}<div class="row" style="margin-top:14px"><button class="btn" onclick="close();editC('${id}')">Edit</button><button class="btn" onclick="close();remind('${id}','Reminder: your appointment with us is coming up.')">Remind</button><button class="btn dng" onclick="del('cust','${id}')">Delete</button><button class="btn" onclick="close()">Close</button></div>`)}
+function editA(){form('New appointment',[['cid','Customer','select',opt('cust',c=>c.name+' · '+c.pet)],['sid','Service','select',opt('svc',s=>s.name)],['uid','Staff','select',D.staff.filter(u=>u.role==='care').map(u=>[u.id,u.name])],['date','Date','date'],['time','Time','select',slotsFor(iso(0)).map(s=>[s[0],s[0]])]],{date:iso(0)},o=>{if(!D.cust.length)return toast('Add a customer first');if(D.appt.some(a=>a.uid===o.uid&&a.date===o.date&&a.time===o.time&&a.st!=='cancelled'))return toast('Staff already booked then');o.st='booked';upsert('appt',null,o);remind(o.cid,'Booking confirmed for '+o.date+' at '+o.time+'.')})}
+function editS(id){form(id?'Edit service':'New service',[['name','Name'],['price','Price','number'],['mins','Minutes','number'],['promo','Promo discount %','number']],id?D.svc.find(s=>s.id===id):{price:0,mins:30,promo:0},o=>upsert('svc',id,o))}
+function editT(){form('New task',[['t','Task'],['uid','Assign to','select',D.staff.map(u=>[u.id,u.name])]],{},o=>{o.st='todo';upsert('task',null,o)})}
+function editM(){form('New message',[['cid','Customer','select',opt('cust',c=>c.name)],['dir','Direction','select',[['out','Outbound'],['in','Inbound enquiry']]],['tpl','Template','select',[['','— none —']].concat(D.faq.map((f,i)=>[f,f.slice(0,40)+'…']))],['text','Message','textarea']],{dir:'out'},o=>{o.text=o.text||o.tpl;delete o.tpl;if(!o.text)return;o.d=iso(0);o.ch='SMS/Email';upsert('msg',null,o)})}
+function editR(){form('Add review',[['cid','Customer','select',opt('cust',c=>c.name)],['r','Rating (1–5)','number'],['t','Comment','textarea']],{r:5},o=>{o.r=Math.min(5,Math.max(1,o.r||5));o.d=iso(0);upsert('rev',null,o)})}
+function editI(){form('New stock item',[['n','Item'],['q','Quantity','number'],['min','Reorder level','number'],['sup','Supplier']],{q:0,min:1},o=>upsert('stock',null,o))}
+function editU(id){form(id?'Edit staff':'New staff',[['name','Name'],['role','Role','select',[['owner','Owner'],['desk','Front desk'],['care','Care team']]],['pin','4-digit PIN']],id?D.staff.find(u=>u.id===id):{role:'care'},o=>{if(!/^\d{4}$/.test(o.pin))return toast('PIN must be 4 digits');upsert('staff',id,o)})}
+function qty(id,n){const s=D.stock.find(x=>x.id===id);s.q=Math.max(0,s.q+n);save();render()}
+function clock(id){const o=D.att.find(a=>a.uid===id&&!a.out);if(o)o.out=Date.now();else D.att.push({uid:id,in:Date.now()});save();render()}
+function saveSet(){Object.assign(S(),{name:$('#sn').value||'CBSystem',tag:$('#st').value,ac:$('#sa').value,cur:$('#sc').value||'£'});save();brand();toast('Saved')}
+function backup(){const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify(D));a.download='cbsystem-pet-backup.json';a.click()}
+function printInv(id){const i=D.inv.find(x=>x.id===id),w=window.open('','_blank');if(!w)return toast('Allow pop-ups to print');w.document.write(`<body style="font-family:sans-serif;max-width:360px;margin:30px auto"><h2>${esc(S().name)}</h2><p>Invoice ${i.id}<br>${i.d}<br>${esc(cn(i.cid))}</p><hr><p>${esc(i.desc)} — <b>${m(i.amt)}</b></p><p>Status: ${i.st}${i.method?' ('+i.method+')':''}</p>`);w.document.close();w.print()}
+/* ---- customer online booking ---- */
+function booking(){const b={sid:D.svc[0].id,date:iso(1),time:''};const draw=()=>{const sl=slotsFor(b.date);$('#ss').innerHTML=`<div class="bb" style="font-size:2.2rem">${esc(S().name)} <span class="g">· Book a visit</span></div><div class="card" style="width:100%;max-width:440px"><label>Service</label><select id="bs">${D.svc.map(s=>`<option value="${s.id}" ${s.id===b.sid?'selected':''}>${esc(s.name)} — ${m(price(s))}</option>`).join('')}</select><label>Date</label><input type="date" id="bd" min="${iso(0)}" value="${b.date}"><label>Time</label><div class="slots">${sl.map(s=>`<button class="btn ${b.time===s[0]?'on':''}" data-t="${s[0]}" ${s[1]?'':'disabled'}>${s[0]}</button>`).join('')}</div><label>Your name</label><input id="bn"><label>Phone</label><input id="bp" type="tel"><label>Email</label><input id="be" type="email"><label>Pet name</label><input id="bpt"><label>Species</label><select id="bsp"><option>Dog</option><option>Cat</option><option>Rabbit</option><option>Other</option></select><label>Pay by</label><select id="bm"><option>Card</option><option>PayPal</option><option>Pay on the day</option></select><div class="row" style="margin-top:14px"><button class="btn pri" id="bgo">Confirm booking</button><button class="btn" onclick="stations()">← Back</button></div></div>`;
+ const keep=()=>{b.sid=$('#bs').value;b.date=$('#bd').value};$('#bs').onchange=()=>{keep();draw()};$('#bd').onchange=()=>{keep();b.time='';draw()};
+ document.querySelectorAll('.slots .btn').forEach(x=>x.onclick=()=>{keep();b.time=x.dataset.t;const v=['bn','bp','be','bpt'].map(i=>$('#'+i).value);draw();['bn','bp','be','bpt'].forEach((i,k)=>$('#'+i).value=v[k])});
+ $('#bgo').onclick=()=>{keep();const n=$('#bn').value.trim(),p=$('#bp').value.trim(),e=$('#be').value.trim();if(!n||!(p||e)||!b.time||!b.date)return toast('Add name, contact and a time slot');
+  if(!slotsFor(b.date).find(s=>s[0]===b.time&&s[1]))return toast('Slot just taken');
+  let c=D.cust.find(x=>x.email&&x.email===e);const isNew=!c;if(!c){c={id:uid(),name:n,phone:p,email:e,pet:$('#bpt').value,species:$('#bsp').value,breed:'',vacc:'',notes:'Online booking',code:newCode()};D.cust.push(c)}
+  const care=D.staff.filter(u=>u.role==='care'),free=care.find(u=>!D.appt.some(a=>a.uid===u.id&&a.date===b.date&&a.time===b.time&&a.st!=='cancelled'))||care[0];
+  D.appt.push({id:uid(),cid:c.id,sid:b.sid,uid:free.id,date:b.date,time:b.time,st:'booked'});save();remind(c.id,'Booking confirmed for '+b.date+' at '+b.time+'.'+(isNew?' Your My Pets portal code: '+c.code:''));
+  $('#ss').innerHTML=`<div class="logo bb">Booked <b>✓</b></div><p>${esc(n)}, we'll see ${esc($('#bpt')?'':'')}you on ${b.date} at ${b.time}.</p><p class="sub">Confirmation sent.${isNew?' Your My Pets portal code is <b>'+c.code+'</b> (sign in with your email).':''} Payment is taken at the desk.</p><button class="btn pri" onclick="stations()">Done</button>`}};draw()}
+
+function newCode(){return String(1000+Math.floor(Math.random()*9000))}
+function mig(d){const s=d.set;s.hooks=s.hooks||{sms:'',email:'',pay:''};s.cloud=s.cloud||{url:'',key:''};(d.cust||[]).forEach(c=>{if(!c.code)c.code=newCode()});return d}
+/* ---- cloud sync via the cbs-pet Edge Function ---- */
+let sb=null,cloudT=0,pushing=false;
+function mergeD(srv,loc){const o=Object.assign({},srv,loc);['cust','appt','inv','msg','rev','task','stock','svc','staff'].forEach(k=>{const m=new Map((srv[k]||[]).map(x=>[x.id,x]));(loc[k]||[]).forEach(x=>m.set(x.id,x));o[k]=[...m.values()]});return o}
+function cloudInit(){clearInterval(cloudT);sb=null;const c=S().cloud||{};if(!c.url||!c.key)return;sb=true;cloudPull();cloudT=setInterval(cloudPull,10000)}
+async function cl(action,extra){const c=S().cloud,r=await fetch(c.url,{method:'POST',headers:{'Content-Type':'application/json','x-staff-key':c.key},body:JSON.stringify(Object.assign({action},extra))});return{s:r.status,j:await r.json().catch(()=>({}))}}
+function adopt(n,ts){n=mig(n);n.set.cloud=S().cloud;n.set.hooks=S().hooks;n._ts=ts;D=DB.d=n;DB.save();brand();render()}
+async function cloudPull(){if(!sb||pushing)return;try{const r=await cl('pull');if(r.s!==200)return toast('Cloud: check function URL / staff key');if(!r.j.data)return cloudPush();if(r.j.ts>(D._ts||0))adopt(r.j.data,r.j.ts)}catch(e){}}
+async function cloudPush(){if(!sb)return;pushing=true;try{const strip=d=>{const p=JSON.parse(JSON.stringify(d));p.set.cloud={url:'',key:''};return p};
+ let r=await cl('push',{data:strip(D),baseTs:D._ts||0});if(r.s===409){const m=mergeD(r.j.data,D);m._ts=r.j.ts;D=DB.d=m;r=await cl('push',{data:strip(D),baseTs:D._ts})}
+ if(r.j.ts){D._ts=r.j.ts;DB.save()}}catch(e){}pushing=false}
+function saveInt(){S().cloud={url:$('#cu').value.trim(),key:$('#ck').value.trim()};S().hooks={sms:$('#hs').value.trim(),email:$('#he').value.trim(),pay:$('#hp').value.trim()};save();cloudInit();toast('Saved');setTimeout(render,600)}
+/* ---- webhooks: POST JSON to your own serverless function that holds the Twilio/Stripe secrets ---- */
+async function hook(type,payload){const u=(S().hooks||{})[type];if(!u)return null;try{const r=await fetch(u,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({type,business:S().name},payload))});return r.ok?await r.json().catch(()=>({ok:true})):null}catch(e){return null}}
+/* ---- customer portal ---- */
+function portalLogin(){$('#ss').innerHTML=`<h2>My Pets</h2><div class="card" style="width:100%;max-width:340px"><label>Email</label><input id="pe" type="email"><label>Portal code (4 digits)</label><input id="pc" type="password" inputmode="numeric" maxlength="4"><div class="row" style="margin-top:12px"><button class="btn pri" id="pg">Sign in</button><button class="btn" onclick="stations()">← Back</button></div></div><div class="sub">Your code is in your booking confirmation, or ask the front desk.</div>`;
+ $('#pg').onclick=()=>{const e=$('#pe').value.trim().toLowerCase(),c=D.cust.find(x=>x.email&&x.email.toLowerCase()===e&&x.code===$('#pc').value);c?portal(c.id):toast('Email or code not recognised')}}
+function portal(cid){const c=D.cust.find(x=>x.id===cid),ap=D.appt.filter(a=>a.cid===cid).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)),iv=D.inv.filter(i=>i.cid===cid),owed=iv.filter(i=>i.st==='unpaid').reduce((t,i)=>t+i.amt,0);
+ $('#ss').innerHTML=`<div class="bb" style="font-size:2rem">Hi ${esc(c.name.split(' ')[0])} 🐾</div><div style="width:100%;max-width:560px;text-align:left"><div class="card"><h3>My pet</h3><div class="bb" style="font-size:1.5rem">${esc(c.pet)}</div>${esc(c.species)} · ${esc(c.breed||'—')}<br>Vaccination due: <b class="${c.vacc&&c.vacc<iso(30)?'o':''}">${c.vacc||'—'}</b></div>
+ <h2 style="margin-top:12px">Appointments</h2>${T(['When','Service','Status',''],ap.map(a=>`<tr><td>${a.date} ${a.time}</td><td>${esc(sn(a.sid))}</td><td><span class="tag">${a.st}</span></td><td>${a.st==='booked'?`<button class="btn sm" onclick="pMove('${a.id}','${cid}')">Move</button> <button class="btn sm dng" onclick="pCancel('${a.id}','${cid}')">Cancel</button>`:''}</td></tr>`))}
+ <h2>Invoices ${owed?'<span class="o">· owing '+m(owed)+'</span>':''}</h2>${T(['Date','Item','Amount','Status'],iv.map(i=>`<tr><td>${i.d}</td><td>${esc(i.desc)}</td><td>${m(i.amt)}</td><td><span class="tag ${i.st==='paid'?'g':'o'}">${i.st}</span></td></tr>`))}
+ <div class="row"><button class="btn pri" onclick="booking()">+ Book a visit</button><button class="btn" onclick="pRev('${cid}')">Leave a review</button><button class="btn" onclick="pMsg('${cid}')">Message us</button><button class="btn" onclick="stations()">Sign out</button></div></div>`}
+function pMove(id,cid){const a=D.appt.find(x=>x.id===id);form('Move appointment',[['date','Date','date'],['time','Time','select',slotsFor(a.date).map(x=>[x[0],x[0]])]],a,o=>{if(!slotsFor(o.date).find(x=>x[0]===o.time&&x[1])&&!(o.date===a.date&&o.time===a.time))return toast('That slot is full');Object.assign(a,o);save();toast('Moved');portal(cid)})}
+function pCancel(id,cid){if(confirm('Cancel this appointment?')){D.appt.find(x=>x.id===id).st='cancelled';save();portal(cid)}}
+function pRev(cid){form('Leave a review',[['r','Rating (1–5)','number'],['t','Comment','textarea']],{r:5},o=>{o.r=Math.min(5,Math.max(1,o.r||5));D.rev.push({id:uid(),cid,r:o.r,t:o.t,d:iso(0)});save();toast('Thank you!');portal(cid)})}
+function pMsg(cid){form('Message us',[['text','Your message','textarea']],{},o=>{if(!o.text)return;D.msg.push({id:uid(),cid,dir:'in',text:o.text,d:iso(0),ch:'Portal'});save();toast('Sent');portal(cid)})}
+DB.load();D=DB.d;
+window.addEventListener('storage',e=>{if(e.key===KEY&&e.newValue){try{D=DB.d=JSON.parse(e.newValue);render()}catch(x){}}});
+brand();stations();cloudInit();
+</script></body></html>
