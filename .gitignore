@@ -1,0 +1,9 @@
+# never commit secrets or customer data
+.env
+.env.*
+supabase/.temp/
+supabase/.branches/
+*backup*.json
+*.key
+node_modules/
+.DS_Store
