@@ -2,7 +2,7 @@
 import {createClient} from 'npm:@supabase/supabase-js@2'
 const db=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 const STAFF=Deno.env.get('STAFF_KEY')||''
-const H={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-staff-key','Content-Type':'application/json'}
+const H={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'content-type,x-staff-key,apikey,authorization','Content-Type':'application/json'}
 const J=(o:any,s=200)=>new Response(JSON.stringify(o),{status:s,headers:H})
 const uid=()=>crypto.randomUUID().slice(0,7)
 const today=()=>new Date().toISOString().slice(0,10)
