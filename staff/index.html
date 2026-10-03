@@ -182,10 +182,11 @@ function booking(){const b={sid:D.svc[0].id,date:iso(1),time:''};const draw=()=>
 function newCode(){return String(1000+Math.floor(Math.random()*9000))}
 function mig(d){const s=d.set;s.hooks=s.hooks||{sms:'',email:'',pay:''};s.cloud=s.cloud||{url:'',key:''};(d.cust||[]).forEach(c=>{if(!c.code)c.code=newCode()});return d}
 /* ---- cloud sync via the cbs-pet Edge Function ---- */
+const ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmb3pib2xsbGNxcnJmYXVud3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NzIzNzYsImV4cCI6MjEwNjU0ODM3Nn0.uXl4qgBq37TVbGFcKr03Ageefwnxw-CrHEZxOa1kVj4'; // public anon key
 let sb=null,cloudT=0,pushing=false;
 function mergeD(srv,loc){const o=Object.assign({},srv,loc);['cust','appt','inv','msg','rev','task','stock','svc','staff'].forEach(k=>{const m=new Map((srv[k]||[]).map(x=>[x.id,x]));(loc[k]||[]).forEach(x=>m.set(x.id,x));o[k]=[...m.values()]});return o}
 function cloudInit(){clearInterval(cloudT);sb=null;const c=S().cloud||{};if(!c.url||!c.key)return;sb=true;cloudPull();cloudT=setInterval(cloudPull,10000)}
-async function cl(action,extra){const c=S().cloud,r=await fetch(c.url,{method:'POST',headers:{'Content-Type':'application/json','x-staff-key':c.key},body:JSON.stringify(Object.assign({action},extra))});return{s:r.status,j:await r.json().catch(()=>({}))}}
+async function cl(action,extra){const c=S().cloud,r=await fetch(c.url,{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON_KEY,'x-staff-key':c.key},body:JSON.stringify(Object.assign({action},extra))});return{s:r.status,j:await r.json().catch(()=>({}))}}
 function adopt(n,ts){n=mig(n);n.set.cloud=S().cloud;n.set.hooks=S().hooks;n._ts=ts;D=DB.d=n;DB.save();brand();render()}
 async function cloudPull(){if(!sb||pushing)return;try{const r=await cl('pull');if(r.s!==200)return toast('Cloud: check function URL / staff key');if(!r.j.data)return cloudPush();if(r.j.ts>(D._ts||0))adopt(r.j.data,r.j.ts)}catch(e){}}
 async function cloudPush(){if(!sb)return;pushing=true;try{const strip=d=>{const p=JSON.parse(JSON.stringify(d));p.set.cloud={url:'',key:''};return p};
