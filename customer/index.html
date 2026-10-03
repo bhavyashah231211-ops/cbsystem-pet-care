@@ -13,7 +13,7 @@ label{display:block;font-size:.75rem;color:var(--t2);margin:9px 0 3px}.btn{backg
 </style></head><body><div class="w"><h1 id="nm">Book</h1><div class="sub" id="tg"></div>
 <div class="tabs"><button class="btn on" id="t1" onclick="tab(1)">Book a visit</button><button class="btn" id="t2" onclick="tab(2)">My Pets</button></div><div id="v"></div></div>
 <script>
-const API='PASTE_YOUR_FUNCTION_URL_HERE'; // e.g. https://xxxx.supabase.co/functions/v1/cbs-pet
+const API='https://vfozbolllcqrrfaunwxx.supabase.co/functions/v1/cbs-pet'; // e.g. https://xxxx.supabase.co/functions/v1/cbs-pet
 const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let I=null,cred=null,sel={date:'',time:''};
 const iso=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
