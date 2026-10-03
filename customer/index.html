@@ -13,12 +13,13 @@ label{display:block;font-size:.75rem;color:var(--t2);margin:9px 0 3px}.btn{backg
 </style></head><body><div class="w"><h1 id="nm">Book</h1><div class="sub" id="tg"></div>
 <div class="tabs"><button class="btn on" id="t1" onclick="tab(1)">Book a visit</button><button class="btn" id="t2" onclick="tab(2)">My Pets</button></div><div id="v"></div></div>
 <script>
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmb3pib2xsbGNxcnJmYXVud3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NzIzNzYsImV4cCI6MjEwNjU0ODM3Nn0.uXl4qgBq37TVbGFcKr03Ageefwnxw-CrHEZxOa1kVj4'; // public anon key (safe: table is locked, only the function can read data)
 const API='https://vfozbolllcqrrfaunwxx.supabase.co/functions/v1/cbs-pet'; // e.g. https://xxxx.supabase.co/functions/v1/cbs-pet
 const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let I=null,cred=null,sel={date:'',time:''};
 const iso=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
 function say(t,e){const x=document.createElement('div');x.className='msg'+(e?' e':'');x.textContent=t;document.body.appendChild(x);setTimeout(()=>x.remove(),3000)}
-async function api(a,b){try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:a},b))});return{ok:r.ok,j:await r.json()}}catch(e){return{ok:false,j:{error:'Network error'}}}}
+async function api(a,b){try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':KEY},body:JSON.stringify(Object.assign({action:a},b))});return{ok:r.ok,j:await r.json()}}catch(e){return{ok:false,j:{error:'Network error'}}}}
 function offline(msg){$('#v').innerHTML=`<div class="card"><h2>Not connected</h2><p>${msg}</p><div class="row"><button class="btn pri" onclick="init()">Try again</button></div></div>`}
 async function init(){if(API.includes('PASTE_YOUR'))return offline('Setup needed: open book.html and set <b>API</b> to your Supabase function URL.');
  const r=await api('info');if(!r.ok)return offline(esc(r.j.error||'Online booking is not available right now.'));I=r.j;$('#nm').innerHTML=esc(I.name)+' <b>PET CARE</b>';$('#tg').textContent=I.tag;document.documentElement.style.setProperty('--ac',I.ac);document.title=I.name;tab(1)}
