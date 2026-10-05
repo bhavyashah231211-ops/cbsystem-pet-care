@@ -1,0 +1,43 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>CBSystem Admin</title>
+<meta name="robots" content="noindex">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#0a0a0f;--card:#1e1e2e;--c2:#252538;--bd:#2a2a40;--ac:#2dd4a0;--tx:#f0f0f8;--t2:#9090b0;--red:#ff4560}
+@media(prefers-color-scheme:light){:root{--bg:#f4f5fa;--card:#fff;--c2:#eef0f7;--bd:#d9dcea;--tx:#161625;--t2:#5a5d78}}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--tx);font:15px system-ui,sans-serif;padding:14px}.w{max-width:760px;margin:0 auto}
+h1{font-size:1.6rem;margin:6px 0 12px}h2{font-size:1.1rem;margin-bottom:8px}.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+input,textarea{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:9px;color:inherit;font:inherit;margin:3px 0 8px}
+.btn{background:var(--c2);border:1px solid var(--bd);border-radius:8px;padding:7px 12px;cursor:pointer;color:inherit;font:inherit}.pri{background:var(--ac);color:#06281d;font-weight:700;border-color:var(--ac)}.red{color:var(--red)}
+table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid var(--bd);text-align:left;font-size:.9rem}.sub{color:var(--t2);font-size:.8rem}.tw{overflow-x:auto}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:10px;font-size:.85rem}
+</style><script src="../config.js"></script></head><body><div class="w"><h1>CBSystem Pet · Admin</h1>
+<div class="card" id="lg"><h2>Admin key</h2><input id="ak" type="password" autocomplete="off" placeholder="Your ADMIN_KEY secret" onkeydown="if(event.key==='Enter')login()"><button class="btn pri" onclick="login()">Open</button> <span class="sub" id="lm"></span></div>
+<div id="main" style="display:none">
+<div class="card"><h2>Create a business</h2><input id="bn" placeholder="Business name e.g. Happy Paws Grooming" oninput="$('bi').value=slug(this.value)"><label class="sub">Business id (used in links)</label><input id="bi" placeholder="happypaws"><button class="btn pri" onclick="create()">Create</button></div>
+<div id="res"></div>
+<div class="card"><h2>Businesses</h2><div class="tw"><table id="tb"></table></div></div></div></div>
+<script>
+const C=window.CBS||{},FN=C.fn,ANON=C.key;
+const $=id=>document.getElementById(id),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const slug=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,30);
+const base=location.href.split('/admin')[0];let KEY=sessionStorage.getItem('cbsadm')||'';
+async function api(a,x){const r=await fetch(FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:ANON,'x-admin-key':KEY},body:JSON.stringify(Object.assign({action:a},x))});return{ok:r.ok,s:r.status,j:await r.json().catch(()=>({}))}}
+async function login(){const m=$('lm');KEY=$('ak').value.trim();
+ if(!FN||!ANON||ANON.includes('PASTE')){m.textContent='config.js is missing or has no key. Upload config.js to the top level of the repo.';return}
+ if(!KEY){m.textContent='Enter your admin key';return}
+ m.textContent='Checking...';let r;try{r=await api('admin_list')}catch(e){m.textContent='Cannot reach the function. Check it is deployed, JWT is off, and the URL in config.js is right.';return}
+ if(!r.ok){m.textContent=r.s===403&&r.j.error==='forbidden'?'Wrong admin key (or the ADMIN_KEY secret is not set in Supabase).':'Error '+r.s+': '+JSON.stringify(r.j).slice(0,200);return}
+ sessionStorage.setItem('cbsadm',KEY);$('lg').style.display='none';$('main').style.display='block';list(r.j.list)}
+async function refresh(){const r=await api('admin_list');if(r.ok)list(r.j.list)}
+function list(l){$('tb').innerHTML='<tr><th>Business</th><th>Status</th><th></th></tr>'+l.map(b=>`<tr><td><b>${esc(b.name)}</b><br><span class="sub">${esc(b.id)}</span></td><td>${b.active?'Active':'<span class="red">Suspended</span>'}</td><td><button class="btn" onclick="tog('${b.id}',${b.active})">${b.active?'Suspend':'Resume'}</button> <button class="btn" onclick="rk('${b.id}')">New key</button> <button class="btn" onclick="ex('${b.id}')">Export</button> <button class="btn red" onclick="rm('${b.id}')">Delete</button></td></tr>`).join('')}
+async function create(){const id=$('bi').value.trim(),name=$('bn').value.trim();const r=await api('admin_create',{b:id,name});if(!r.ok)return alert(r.j.error||'Failed');show(id,name,r.j.key,r.j.ownerPin,r.j.carePin);$('bn').value=$('bi').value='';refresh()}
+function show(id,name,key,op,cp){const st=base+'/staff/?b='+id,cu=base+'/customer/?b='+id;
+ const msg=`Hi,\n\nYour CBSystem Pet Care account for ${name} is ready.\n\nStaff app: ${st}\nStaff key (enter once on each device): ${key}\nOwner PIN: ${op}  (change it in Settings)\nCare-team PIN: ${cp}\n\nCustomer booking page (put this link/QR on your website and shop): ${cu}\n\nFirst steps: open the staff app, enter the key, log in as Owner, go to Settings and Services to set your business name, hours, prices and spaces per slot.`;
+ $('res').innerHTML=`<div class="card"><h2>${esc(name)} is ready</h2><p class="sub">The key is shown only now. Copy it.</p><pre id="m">${esc(msg)}</pre><button class="btn pri" onclick="navigator.clipboard.writeText($('m').textContent)">Copy message</button><div id="qr" style="background:#fff;padding:8px;display:inline-block;margin-left:10px;vertical-align:top"></div></div>`;
+ try{new QRCode($('qr'),{text:cu,width:120,height:120})}catch(e){$('qr').remove()}}
+async function tog(id,a){if(confirm((a?'Suspend ':'Resume ')+id+'?')){await api(a?'admin_suspend':'admin_resume',{b:id});refresh()}}
+async function rk(id){if(!confirm('Make a new staff key for '+id+'? The old key stops working.'))return;const r=await api('admin_resetkey',{b:id});if(r.ok)prompt('New staff key (copy it):',r.j.key)}
+async function ex(id){const r=await api('admin_export',{b:id});if(!r.ok)return;const a=document.createElement('a');a.href='data:application/json,'+encodeURIComponent(JSON.stringify(r.j.data,null,1));a.download=id+'-export.json';a.click()}
+async function rm(id){if(prompt('Type the business id to delete ALL its data:')===id){await api('admin_delete',{b:id});refresh()}}
+if(!FN)$('lm').textContent='config.js not found. Upload it to the top level of the repo.';else if(KEY){$('ak').value=KEY;login()}
+</script></body></html>
