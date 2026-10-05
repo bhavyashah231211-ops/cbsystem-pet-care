@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Book &amp; My Pets</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--card:#1e1e2e;--c2:#252538;--bd:#2a2a40;--ac:#2dd4a0;--tx:#f0f0f8;--t2:#9090b0;--red:#ff4560;--or:#ff8a3d}
+@media(prefers-color-scheme:light){:root{--bg:#f4f5fa;--card:#fff;--c2:#eef0f7;--bd:#d9dcea;--tx:#161625;--t2:#5a5d78}}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--tx);font:15px 'DM Sans',system-ui,sans-serif;padding:env(safe-area-inset-top,0) 14px env(safe-area-inset-bottom,0)}
+.w{max-width:520px;margin:0 auto;padding:16px 0}h1,h2{font-family:'Bebas Neue',Impact,sans-serif;font-weight:400;letter-spacing:2px}h1{font-size:2.6rem;line-height:1}h1 b{color:var(--ac);font-weight:400}
+.tabs{display:flex;gap:6px;margin:12px 0}.tabs button{flex:1}.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:12px}
+button,input,select,textarea{font:inherit;color:inherit}input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bd);border-radius:9px;padding:9px}
+label{display:block;font-size:.75rem;color:var(--t2);margin:9px 0 3px}.btn{background:var(--c2);border:1px solid var(--bd);border-radius:9px;padding:9px 14px;cursor:pointer}.btn.on,.pri{background:var(--ac);color:#06281d;border-color:var(--ac);font-weight:700}.btn[disabled]{opacity:.3}
+.sl{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.sub{color:var(--t2);font-size:.8rem}.li{display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd);align-items:center}
+.msg{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--ac);color:#06281d;padding:9px 16px;border-radius:10px;font-weight:700;z-index:9}.msg.e{background:var(--red);color:#fff}
+</style></head><body><div class="w"><h1 id="nm">Book</h1><div class="sub" id="tg"></div>
+<div class="tabs"><button class="btn on" id="t1" onclick="tab(1)">Book a visit</button><button class="btn" id="t2" onclick="tab(2)">My Pets</button></div><div id="v"></div></div>
+<script>
+const KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmb3pib2xsbGNxcnJmYXVud3h4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NzIzNzYsImV4cCI6MjEwNjU0ODM3Nn0.uXl4qgBq37TVbGFcKr03Ageefwnxw-CrHEZxOa1kVj4'; // public anon key (safe: table is locked, only the function can read data)
+const API='https://vfozbolllcqrrfaunwxx.supabase.co/functions/v1/cbs-biz';
+const B=(new URLSearchParams(location.search).get('b')||'').toLowerCase(); // e.g. https://xxxx.supabase.co/functions/v1/cbs-pet
+const $=s=>document.querySelector(s),esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let I=null,cred=null,sel={date:'',time:''};
+const iso=n=>{const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)};
+function say(t,e){const x=document.createElement('div');x.className='msg'+(e?' e':'');x.textContent=t;document.body.appendChild(x);setTimeout(()=>x.remove(),3000)}
+async function api(a,b){try{const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','apikey':KEY},body:JSON.stringify(Object.assign({action:a,b:B},b))});return{ok:r.ok,j:await r.json()}}catch(e){return{ok:false,j:{error:'Network error'}}}}
+function offline(msg){$('#v').innerHTML=`<div class="card"><h2>Not connected</h2><p>${msg}</p><div class="row"><button class="btn pri" onclick="init()">Try again</button></div></div>`}
+async function init(){if(!B)return offline('Please open the booking link your venue gave you.');if(API.includes('PASTE_YOUR'))return offline('Setup needed: open book.html and set <b>API</b> to your Supabase function URL.');
+ const r=await api('info');if(!r.ok)return offline(esc(r.j.error||'Online booking is not available right now.'));I=r.j;$('#nm').innerHTML=esc(I.name)+' <b>PET CARE</b>';$('#tg').textContent=I.tag;document.documentElement.style.setProperty('--ac',I.ac);document.title=I.name;tab(1)}
+function tab(n){if(!I)return init();$('#t1').classList.toggle('on',n==1);$('#t2').classList.toggle('on',n==2);n==1?bookView():cred?portal():loginView()}
+async function picker(el,date,sid,pick,cur){const r=await api('slots',{date,sid});el.innerHTML=(r.j.slots||[]).map(s=>`<button class="btn ${cur===s[0]?'on':''}" data-t="${s[0]}" ${s[1]?'':'disabled'}>${s[0]}<br><small>${s[1]?s[2]+' left':'Full'}</small></button>`).join('')||'<span class="sub">No slots</span>';el.querySelectorAll('button').forEach(x=>x.onclick=()=>pick(x.dataset.t))}
+function bookView(){sel={date:iso(1),time:''};$('#v').innerHTML=`<div class="card"><label>Service</label><select id="s">${I.svc.map(s=>`<option value="${s.id}">${esc(s.name)} · ${I.cur}${s.price.toFixed(2)}</option>`).join('')}</select><label>Date</label><input type="date" id="d" min="${iso(0)}" value="${sel.date}"><label>Time</label><div class="sl" id="sl"></div>
+<label>Your name</label><input id="n"><label>Phone</label><input id="p" type="tel"><label>Email</label><input id="e" type="email"><label>Pet name</label><input id="pt"><label>Species</label><select id="sp"><option>Dog</option><option>Cat</option><option>Rabbit</option><option>Other</option></select><div class="row"><button class="btn pri" id="go">Confirm booking</button></div><p class="sub" style="margin-top:8px">Payment is taken at the venue.</p></div>`;
+ const slots=()=>picker($('#sl'),sel.date,$('#s').value,t=>{sel.time=t;slots()},sel.time);$('#s').onchange=()=>{sel.time='';slots()};$('#d').onchange=()=>{sel.date=$('#d').value;sel.time='';slots()};slots();
+ $('#go').onclick=async()=>{if(!sel.time)return say('Pick a time',1);const r=await api('book',{sid:$('#s').value,date:sel.date,time:sel.time,name:$('#n').value,phone:$('#p').value,email:$('#e').value,pet:$('#pt').value,species:$('#sp').value});
+  if(!r.ok)return say(r.j.error||'Could not book',1);$('#v').innerHTML=`<div class="card"><h2>Booked ✓</h2><p>${esc(sel.date)} at ${esc(sel.time)}</p>${r.j.code?`<p style="margin-top:8px">Your <b>My Pets</b> portal code: <b style="font-size:1.4rem;color:var(--ac)">${esc(r.j.code)}</b><br><span class="sub">Save it, then sign in with your email.</span></p>`:''}<div class="row"><button class="btn" onclick="tab(1)">Book another</button></div></div>`}}
+function loginView(){$('#v').innerHTML=`<div class="card"><label>Email</label><input id="le" type="email"><label>Portal code (4 digits)</label><input id="lc" type="password" inputmode="numeric" maxlength="4"><div class="row"><button class="btn pri" id="lg">Sign in</button></div></div>`;$('#lg').onclick=async()=>{cred={email:$('#le').value,code:$('#lc').value};portal(true)}}
+async function portal(first){const r=await api('login',cred);if(!r.ok){cred=null;say(r.j.error||'Sign in failed',1);return loginView()}const c=r.j;
+ $('#v').innerHTML=`<div class="card"><h2>${esc(c.pet||'My pet')}</h2><div class="sub">${esc(c.species)} ${esc(c.breed)}</div><div>Vaccination due: <b>${esc(c.vacc||'—')}</b></div></div>
+ <div class="card"><h2>Appointments</h2>${c.appts.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)).map(a=>`<div class="li"><span>${a.date} ${a.time}<br><span class="sub">${esc(a.svc)} · ${a.st}</span></span><span>${a.st==='booked'?`<button class="btn" onclick="mv('${a.id}','${a.sid}')">Move</button> <button class="btn" onclick="cx('${a.id}')">Cancel</button>`:''}</span></div>`).join('')||'<div class="sub">None yet</div>'}<div id="mvb"></div></div>
+ <div class="card"><h2>Invoices</h2>${c.inv.map(i=>`<div class="li"><span>${i.d} · ${esc(i.desc)}</span><span>${I.cur}${Number(i.amt).toFixed(2)} <span class="sub">${i.st}</span></span></div>`).join('')||'<div class="sub">None yet</div>'}</div>
+ <div class="card"><label>Message or review</label><textarea id="tx" rows="3"></textarea><div class="row"><button class="btn" onclick="sm()">Send message</button><button class="btn" onclick="rv()">Post as 5★ review</button><button class="btn" onclick="cred=null;tab(2)">Sign out</button></div></div>`}
+async function act(a,b,ok){const r=await api(a,Object.assign({},cred,b));if(!r.ok)return say(r.j.error||'Failed',1);say(ok);portal()}
+function cx(id){if(confirm('Cancel this appointment?'))act('cancel',{id},'Cancelled')}
+function sm(){const t=$('#tx').value.trim();if(t)act('message',{text:t},'Sent')}
+function rv(){const t=$('#tx').value.trim();if(t)act('review',{r:5,t},'Thank you!')}
+function mv(id,sid){$('#mvb').innerHTML=`<label>New date</label><input type="date" id="md" min="${iso(0)}" value="${iso(1)}"><div class="sl" id="ms"></div>`;const s=()=>picker($('#ms'),$('#md').value,sid,t=>act('move',{id,date:$('#md').value,time:t},'Moved'));$('#md').onchange=s;s()}
+init();
+</script></body></html>
